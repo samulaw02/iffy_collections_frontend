@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" viewBox="0 0 680 720">
+  <title>Iffy Collections</title>
+  <defs>
+    <style>
+      .gold { fill: #C9A84C; }
+      .gold-stroke { fill: none; stroke: #C9A84C; }
+      .gold-text { fill: #C9A84C; font-family: Georgia, 'Times New Roman', serif; }
+    </style>
+  </defs>
+
+  <g transform="translate(340,360)">
+    <!-- Outer decorative ring -->
+    <circle cx="0" cy="0" r="258" class="gold-stroke" stroke-width="2.5"/>
+    <circle cx="0" cy="0" r="248" class="gold-stroke" stroke-width="0.8"/>
+    <!-- Inner ring -->
+    <circle cx="0" cy="0" r="195" class="gold-stroke" stroke-width="1.5"/>
+
+    <!-- Decorative dots -->
+    <g class="gold">
+      <circle cx="0" cy="-258" r="3.5"/>
+      <circle cx="0" cy="258" r="3.5"/>
+      <circle cx="-258" cy="0" r="3.5"/>
+      <circle cx="258" cy="0" r="3.5"/>
+      <circle cx="-182" cy="-182" r="2.5"/>
+      <circle cx="182" cy="-182" r="2.5"/>
+      <circle cx="-182" cy="182" r="2.5"/>
+      <circle cx="182" cy="182" r="2.5"/>
+    </g>
+
+    <!-- Wheat branch -->
+    <g class="gold-stroke" stroke-width="1.2" stroke-linecap="round">
+      <path d="M -145,140 C -160,80 -175,10 -150,-80" fill="none"/>
+      <path d="M -153,100 C -185,75 -195,45 -168,60" fill="#C9A84C" opacity="0.9"/>
+      <path d="M -156,60 C -190,30 -198,-5 -168,15" fill="#C9A84C" opacity="0.9"/>
+      <path d="M -155,15 C -185,-20 -188,-52 -162,-35" fill="#C9A84C" opacity="0.9"/>
+      <path d="M -152,-30 C -175,-65 -172,-92 -150,-78" fill="#C9A84C" opacity="0.8"/>
+      <path d="M -148,90 C -118,65 -112,38 -140,55" fill="#C9A84C" opacity="0.9"/>
+      <path d="M -151,45 C -120,18 -115,-12 -143,8" fill="#C9A84C" opacity="0.9"/>
+      <path d="M -152,-5 C -122,-35 -118,-60 -148,-42" fill="#C9A84C" opacity="0.8"/>
+      <path d="M -150,-52 C -125,-78 -122,-100 -150,-85" fill="#C9A84C" opacity="0.7"/>
+      <path d="M -150,-80 C -155,-105 -148,-122 -143,-105" fill="#C9A84C" opacity="0.85"/>
+      <path d="M -150,-80 C -140,-108 -136,-122 -143,-105" fill="#C9A84C" opacity="0.85"/>
+      <line x1="-150" y1="-80" x2="-143" y2="-118" stroke="#C9A84C" stroke-width="1"/>
+    </g>
+
+    <!-- IC Monogram -->
+    <text x="-32" y="22" class="gold-text" font-size="88" font-weight="bold" text-anchor="middle" letter-spacing="-4">I</text>
+    <text x="30" y="22" class="gold-text" font-size="88" font-style="italic" font-weight="bold" text-anchor="middle">C</text>
+
+    <!-- Divider line -->
+    <line x1="-60" y1="40" x2="60" y2="40" class="gold-stroke" stroke-width="0.8"/>
+
+    <!-- Iffy script -->
+    <text x="0" y="85" class="gold-text" font-size="36" font-style="italic" font-weight="bold" text-anchor="middle" letter-spacing="2">Iffy</text>
+
+    <!-- COLLECTIONS -->
+    <text x="0" y="122" class="gold-text" font-size="16" font-weight="bold" text-anchor="middle" letter-spacing="5">COLLECTIONS</text>
+
+    <!-- Decorative lines flanking COLLECTIONS -->
+    <line x1="-118" y1="113" x2="-78" y2="113" class="gold-stroke" stroke-width="0.8"/>
+    <line x1="78" y1="113" x2="118" y2="113" class="gold-stroke" stroke-width="0.8"/>
+
+    <!-- Bottom arcs -->
+    <path d="M -80,155 Q 0,172 80,155" class="gold-stroke" stroke-width="0.8"/>
+    <path d="M -80,163 Q 0,180 80,163" class="gold-stroke" stroke-width="0.8"/>
+
+    <!-- Diamond ornaments -->
+    <g class="gold">
+      <polygon points="0,-170 5,-163 0,-156 -5,-163" opacity="0.9"/>
+      <polygon points="-8,148 -4,154 -8,160 -12,154" opacity="0.7"/>
+      <polygon points="8,148 12,154 8,160 4,154" opacity="0.7"/>
+    </g>
+
+    <!-- Tick marks -->
+    <g class="gold-stroke" stroke-width="1.2">
+      <line x1="-3" y1="-252" x2="3" y2="-252"/>
+      <line x1="-3" y1="252" x2="3" y2="252"/>
+      <line x1="-252" y1="-3" x2="-252" y2="3"/>
+      <line x1="252" y1="-3" x2="252" y2="3"/>
+    </g>
+
+    <!-- Bodija Ibadan -->
+    <text x="0" y="230" class="gold-text" font-size="13" text-anchor="middle" letter-spacing="3" opacity="0.85">BODIJA · IBADAN</text>
+  </g>
+</svg>
