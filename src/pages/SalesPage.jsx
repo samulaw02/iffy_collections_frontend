@@ -25,6 +25,7 @@ export default function SalesPage() {
   const [amountPaid, setAmountPaid] = useState('');
   const [processing, setProcessing] = useState(false);
   const [completedSale, setCompletedSale] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0);
   const searchRef = useRef();
 
   useEffect(() => {
@@ -35,7 +36,7 @@ export default function SalesPage() {
       } catch { }
     };
     fetchProducts();
-  }, [search]);
+  }, [search, refreshKey]);
 
   useEffect(() => {
     if (customerSearch.length < 2) { setCustomerResults([]); return; }
@@ -128,6 +129,11 @@ export default function SalesPage() {
     setCart(prev => prev.map(i => i.id === id ? { ...i, qty } : i));
   };
 
+  const updatePrice = (id, price) => {
+    const val = parseFloat(price);
+    setCart(prev => prev.map(i => i.id === id ? { ...i, price: isNaN(val) || val < 0 ? 0 : val } : i));
+  };
+
   const removeFromCart = (id) => setCart(prev => prev.filter(i => i.id !== id));
 
   const subtotal = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
@@ -137,9 +143,14 @@ export default function SalesPage() {
   const total = Math.max(0, subtotal - discountAmt);
   const change = Math.max(0, (parseFloat(amountPaid) || 0) - total);
 
+  useEffect(() => {
+    if (cart.length > 0) setAmountPaid(total.toString());
+  }, [total]);
+
   const handleCheckout = async () => {
     if (cart.length === 0) return toast.error('Cart is empty');
-    if (paymentMethod === 'cash' && parseFloat(amountPaid) < total) return toast.error('Amount paid is less than total');
+    if (!amountPaid || parseFloat(amountPaid) <= 0) return toast.error('Amount paid is required');
+    if (parseFloat(amountPaid) < total) return toast.error('Amount paid is less than total');
     setProcessing(true);
     try {
       const res = await api.post('/sales', {
@@ -148,7 +159,7 @@ export default function SalesPage() {
         items: cart.map(i => ({ product_id: i.id, quantity: i.qty, unit_price: i.price })),
         discount: discountAmt,
         payment_method: paymentMethod,
-        amount_paid: paymentMethod === 'cash' ? parseFloat(amountPaid) : total,
+        amount_paid: parseFloat(amountPaid) || total,
         price_type: priceType,
       });
       setCompletedSale(res.data);
@@ -319,7 +330,7 @@ export default function SalesPage() {
                 </span>
               )}
             </h2>
-            {cart.length > 0 && <button onClick={() => setCart([])} className="text-xs text-red-500 hover:text-red-700">Clear all</button>}
+            {cart.length > 0 && <button onClick={() => { setCart([]); setDiscount(''); setAmountPaid(''); setPaymentMethod('cash'); setCustomer({ name: '', phone: '', email: '', id: null }); setCustomerSearch(''); }} className="text-xs text-red-500 hover:text-red-700">Clear all</button>}
           </div>
 
           {cart.length === 0 ? (
@@ -330,20 +341,35 @@ export default function SalesPage() {
           ) : (
             <div className="space-y-2 max-h-64 overflow-y-auto">
               {cart.map(item => (
-                <div key={item.id} className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{item.name}</p>
-                    <p className="text-xs text-gray-500">{fmt(item.price)} each</p>
+                <div key={item.id} className="p-2 bg-gray-50 rounded-lg space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium flex-1 truncate">{item.name}</p>
+                    <button onClick={() => removeFromCart(item.id)} className="text-gray-300 hover:text-red-500 text-lg leading-none flex-shrink-0">×</button>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <button onClick={() => updateQty(item.id, item.qty - 1)} className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center text-sm hover:bg-gray-200">−</button>
-                    <span className="w-8 text-center text-sm font-medium">{item.qty}</span>
-                    <button onClick={() => updateQty(item.id, item.qty + 1)} className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center text-sm hover:bg-gray-200">+</button>
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
+                      <button onClick={() => updateQty(item.id, item.qty - 1)} className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center text-sm hover:bg-gray-200">−</button>
+                      <span className="w-8 text-center text-sm font-medium">{item.qty}</span>
+                      <button onClick={() => updateQty(item.id, item.qty + 1)} className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center text-sm hover:bg-gray-200">+</button>
+                    </div>
+                    <div className="flex items-center gap-1 flex-1">
+                      <span className="text-xs text-gray-400">₦</span>
+                      <input
+                        type="number"
+                        min="0"
+                        className="input py-0.5 px-1.5 text-sm w-full"
+                        value={item.price}
+                        onChange={e => updatePrice(item.id, e.target.value)}
+                      />
+                    </div>
+                    <p className="text-sm font-semibold min-w-[70px] text-right">{fmt(item.price * item.qty)}</p>
                   </div>
-                  <div className="text-right min-w-[70px]">
-                    <p className="text-sm font-semibold">{fmt(item.price * item.qty)}</p>
-                  </div>
-                  <button onClick={() => removeFromCart(item.id)} className="text-gray-300 hover:text-red-500 text-lg leading-none">×</button>
+                  {(() => {
+                    const minPreset = item.wholesale_price > 0 ? Math.min(item.retail_price, item.wholesale_price) : item.retail_price;
+                    return item.price < minPreset ? (
+                      <p className="text-xs text-amber-600">Below min preset price of {fmt(minPreset)}</p>
+                    ) : null;
+                  })()}
                 </div>
               ))}
             </div>
@@ -378,18 +404,19 @@ export default function SalesPage() {
             </select>
           </div>
 
-          {paymentMethod === 'cash' && (
-            <>
-              <div>
-                <label className="label">Amount Paid (₦)</label>
-                <input className="input" type="number" min={total} value={amountPaid} onChange={e => setAmountPaid(e.target.value)} placeholder={total.toString()} />
-              </div>
-              {amountPaid && parseFloat(amountPaid) >= total && (
-                <div className="flex justify-between text-sm font-semibold text-green-700 bg-green-50 px-3 py-2 rounded-lg">
-                  <span>Change</span><span>{fmt(change)}</span>
-                </div>
-              )}
-            </>
+          <div>
+            <label className="label">Amount Paid (₦)</label>
+            <input className="input" type="number" min="0" value={amountPaid} onChange={e => setAmountPaid(e.target.value)} placeholder={total.toString()} />
+          </div>
+          {amountPaid && parseFloat(amountPaid) > total && (
+            <div className="flex justify-between text-sm font-semibold text-green-700 bg-green-50 px-3 py-2 rounded-lg">
+              <span>Change</span><span>{fmt(change)}</span>
+            </div>
+          )}
+          {amountPaid && parseFloat(amountPaid) < total && (
+            <div className="flex justify-between text-sm font-semibold text-red-700 bg-red-50 px-3 py-2 rounded-lg">
+              <span>Outstanding</span><span>{fmt(total - parseFloat(amountPaid))}</span>
+            </div>
           )}
 
           <button
@@ -403,7 +430,7 @@ export default function SalesPage() {
       </div>
 
       {completedSale && (
-        <ReceiptModal sale={completedSale} onClose={() => setCompletedSale(null)} />
+        <ReceiptModal sale={completedSale} onClose={() => { setCompletedSale(null); setRefreshKey(k => k + 1); }} />
       )}
     </div>
   );

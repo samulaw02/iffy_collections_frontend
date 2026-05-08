@@ -123,10 +123,6 @@ const ReceiptPrint = React.forwardRef(({ sale, items }, ref) => (
       <span>Amount Paid:</span>
       <span>{fmt(sale.amount_paid)}</span>
     </div>
-    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-      <span>Change:</span>
-      <span>{fmt(sale.change_given)}</span>
-    </div>
 
     <Divider />
 
